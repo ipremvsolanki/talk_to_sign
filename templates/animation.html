@@ -1,52 +1,46 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
-<div class="split left">
-    <h2 align="center">Enter Text or Use Mic</h2>
-    <br>
-    <form action="" method="post" align="left">
-        {% csrf_token %}
-        <input type="text" name="sen" class="mytext" id="speechToText" placeholder="">
-        
-        <!-- Mic Button for Speech-to-Text -->
-        <button type="button" name="button" class="mic" id="recordBtn" onclick="toggleRecording()">
-            <img src="{% static 'mic3.png' %}" id="micIcon" height="32px" width="38px" />
-        </button>
-
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="submit" name="submit" class="submit">
-    </form>
-    <table cellspacing="20px">
-        <tr>
-            <td class="td">The text that you entered is:</td>
-            <td class="td">{{ text }}</td>
-        </tr>
-        <tr>
-            <td class="td">Key words in sentence:</td>
-            <td class="td">
-            <ul class="td" id="list" align="center">
+<div class="flex flex-col md:flex-row gap-8">
+    <div class="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-4 text-center text-indigo-600">Enter Text or Use Mic</h2>
+        <form action="" method="post" class="space-y-4">
+            {% csrf_token %}
+            <div class="flex items-center space-x-2">
+                <input type="text" name="sen" id="speechToText" placeholder="Enter text here" class="flex-grow p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button type="button" id="recordBtn" class="p-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition duration-300" onclick="toggleRecording()">
+                    <img src="{% static 'mic3.png' %}" id="micIcon" alt="Microphone" class="w-6 h-6">
+                </button>
+            </div>
+            <button type="submit" class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300">Submit</button>
+        </form>
+        <div class="mt-6">
+            <h3 class="font-semibold text-lg mb-2">The text that you entered is:</h3>
+            <p class="bg-gray-100 p-2 rounded">{{ text }}</p>
+        </div>
+        <div class="mt-4">
+            <h3 class="font-semibold text-lg mb-2">Key words in sentence:</h3>
+            <ul id="list" class="flex flex-wrap gap-2">
                 {% for word in words %}
-                <li id="{{ i }}" style="margin-right: 8px">{{ word }}</li>
+                    <li id="{{ i }}" class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded">{{ word }}</li>
                 {% endfor %}
             </ul>
-            </td>
-        </tr>
-    </table>
-</div>
-<div class="split right">
-    <h2 align="center">Sign Language Animation</h2>
-
-    <div style="text-align:center">	&nbsp&nbsp
-        <button class="submit" onclick="playPause()">Play/Pause</button>
-        <button onclick="makeBig()">Big</button>
-        <button onclick="makeSmall()">Small</button>
-        <button onclick="makeNormal()">Normal</button>
-
-        <video id="videoPlayer" width="600" height="350"  preload="auto" autoplay>
-            <source src="" type="video/mp4">
-            Your browser does not support HTML5 video.
-        </video>
+        </div>
+    </div>
+    <div class="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-4 text-center text-indigo-600">Sign Language Animation</h2>
+        <div class="text-center space-y-4">
+            <div class="space-x-2">
+                <button onclick="playPause()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300">Play/Pause</button>
+                <button onclick="makeBig()" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300">Big</button>
+                <button onclick="makeSmall()" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition duration-300">Small</button>
+                <button onclick="makeNormal()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300">Normal</button>
+            </div>
+            <video id="videoPlayer" class="w-full rounded-lg shadow-md" preload="auto">
+                <source src="" type="video/mp4">
+                Your browser does not support HTML5 video.
+            </video>
+        </div>
     </div>
 </div>
 
@@ -60,6 +54,7 @@ const API_KEY = '1b23f4e41b8346849225270232f5e3f9'; // Replace with your Assembl
 let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
+let screen_size = "normal"
 
 // Toggle recording
 function toggleRecording() {
@@ -184,6 +179,19 @@ function play() {
         document.getElementById("list").getElementsByTagName("li")[videoNum].style.color = "#09edc7";
         document.getElementById("list").getElementsByTagName("li")[videoNum].style.fontSize = "xx-large";
         document.getElementById("videoPlayer").setAttribute("src", videoSource[videoNum]);
+
+        switch (screen_size) {
+            case "big":
+                document.getElementById("videoPlayer").width = 560;
+                document.getElementById("videoPlayer").height = 360;
+            case "small":
+                document.getElementById("videoPlayer").width = 320;
+                document.getElementById("videoPlayer").height = 180;
+            default:
+                document.getElementById("videoPlayer").width = 420;
+                document.getElementById("videoPlayer").height = 280;
+        }
+
         document.getElementById("videoPlayer").load();
         document.getElementById("videoPlayer").play();
     }
@@ -207,18 +215,21 @@ function play() {
 }
 
 function makeBig() {
-    document.getElementById("videoPlayer").width = 560;
-    document.getElementById("videoPlayer").height = 360;
+    const video = document.getElementById("videoPlayer");
+    video.style.width = "560px";
+    video.style.height = "360px";
 }
 
 function makeSmall() {
-    document.getElementById("videoPlayer").width = 320;
-    document.getElementById("videoPlayer").height = 180;
+    const video = document.getElementById("videoPlayer");
+    video.style.width = "320px";
+    video.style.height = "180px";
 }
 
 function makeNormal() {
-    document.getElementById("videoPlayer").width = 420;
-    document.getElementById("videoPlayer").height = 280;
+    const video = document.getElementById("videoPlayer");
+    video.style.width = "420px";
+    video.style.height = "280px";
 }
 
 function playPause() {

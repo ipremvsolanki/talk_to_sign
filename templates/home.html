@@ -1,13 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block content %}
-<video width="500" height="380" class="center" autoplay loop>
-  <source src= "{% static 'Hello.mp4' %}" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-	<div class="form-style" align="middle" >
-	<a href="{% url 'animation' %}"><button class="button">Click to Start</button></a>
-	</div>
+<div class="flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-4xl md:text-5xl font-bold text-indigo-600 mb-8 text-center">Welcome to Talk To Sign Language Tool</h1>
+    <div class="relative w-full max-w-2xl aspect-video rounded-lg overflow-hidden shadow-xl mb-8">
+        <video class="w-full h-full object-cover" autoplay loop muted playsinline>
+            <source src="{% static 'Hello.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <a href="{% url 'animation' %}" class="animate-pulse bg-indigo-600 text-white font-bold py-3 px-6 rounded-full text-xl hover:bg-indigo-700 transition duration-300 transform hover:scale-105">
+        Start Converting
+    </a>
+    <p class="mt-8 text-gray-600 text-center max-w-2xl">
+        Experience the power of our Talk to Sign Language conversion tool. 
+        Break communication barriers and make your content accessible to everyone.
+    </p>
+</div>
 {% endblock %}
